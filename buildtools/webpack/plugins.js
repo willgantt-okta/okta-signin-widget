@@ -3,10 +3,23 @@
 
 const { readFileSync } = require('fs');
 const { join } = require('path');
-const { DefinePlugin, BannerPlugin, optimize } = require('webpack');
+const { DefinePlugin, BannerPlugin, optimize, ContextReplacementPlugin } = require('webpack');
 const { some } = require('underscore');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const UglifyJsPlugin = optimize.UglifyJsPlugin;
+
+function emptyModule() {
+  return new ContextReplacementPlugin(/\.\/locale$/, 'empty-module', false, /js$/);
+}
+
+function bundleAnalyzer() {
+  return new BundleAnalyzerPlugin({
+    openAnalyzer: false,
+    reportFilename: 'okta-sign-in.html',
+    analyzerMode: 'static',
+  });
+}
 
 function devMode() {
   return new DefinePlugin({
@@ -72,10 +85,10 @@ function banner() {
 function plugins(options = {}) {
   if (options.isProduction) {
     // Uglify and add license header
-    return [ uglify(), banner() ];
+    return [ emptyModule(), uglify(), banner() ];
   }
   // Use DEBUG/development environment w/ console warnings
-  return [ devMode() ];
+  return [ emptyModule(), devMode(), bundleAnalyzer() ];
 }
 
 module.exports = plugins;
