@@ -12,11 +12,10 @@
 
 /* eslint complexity: [2, 17], max-statements: [2, 32] */
 define([
-  'okta'
+  'okta',
+  './TimeUtil'
 ],
-function (Okta) {
-
-  var { TimeUtil } = Okta.internal.util;
+function (Okta, TimeUtil) {
 
   var _ = Okta._;
 
